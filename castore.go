@@ -225,8 +225,11 @@ func FlatTransformFunc(key string) []string {
 
 // DepthTransformFunc will split the input key into the given number of two-
 // length strings and use those as directories.  For example, for the input
-// key "abcdef", DepthTransformFunc(1) will return `[]string{"ab"}`,
-// DepthTransformFunc(2) will return `[]string{"ab", "cd"}`, and so on.
+// key "abcdef", DepthTransformFunc(1) will return:
+//     []string{"ab"}
+// DepthTransformFunc(2) will return:
+//     []string{"ab", "cd"}
+// and so on.
 func DepthTransformFunc(depth int) TransformFunction {
 	return func(key string) []string {
 		ret := []string{}
