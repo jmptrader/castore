@@ -32,7 +32,8 @@ type Options struct {
 	Transform TransformFunction
 
 	// MaxSize specifies the upper limit on the size of values that can be
-	// inserted into the CAStore.  If not specified, this will default to 10MiB.
+	// inserted into the CAStore.  If not specified or negative, this will default
+	// to 10 MiB.
 	MaxSize int64
 }
 
@@ -73,7 +74,7 @@ func New(opts Options) (*CAStore, error) {
 	if opts.Transform == nil {
 		opts.Transform = FlatTransformFunc
 	}
-	if opts.MaxSize == 0 {
+	if opts.MaxSize <= 0 {
 		opts.MaxSize = 10 * 1024 * 1024
 	}
 
