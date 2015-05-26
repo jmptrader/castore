@@ -11,6 +11,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	TEST_KEY   = "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2"
+	TEST_VALUE = "foobar"
+)
+
 func must_s(s string, err error) string {
 	if err != nil {
 		panic(err)
@@ -26,11 +31,6 @@ func TestSimpleGetPut(t *testing.T) {
 		BasePath: tdir,
 	})
 	assert.NoError(t, err)
-
-	const (
-		TEST_KEY   = "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2"
-		TEST_VALUE = "foobar"
-	)
 
 	// Test round-trip value
 	key, err := s.Put(strings.NewReader(TEST_VALUE))
@@ -101,12 +101,31 @@ func TestPutBytes(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	const (
-		TEST_KEY   = "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2"
-		TEST_VALUE = "foobar"
-	)
-
 	key, err := s.PutBytes([]byte(TEST_VALUE))
+	assert.NoError(t, err)
+	assert.Equal(t, TEST_KEY, key)
+
+	r, err := s.Get(TEST_KEY)
+	assert.NoError(t, err)
+
+	data, err := ioutil.ReadAll(r)
+	r.Close()
+	assert.NoError(t, err)
+
+	assert.Equal(t, []byte(TEST_VALUE), data)
+}
+
+// TODO: this is a bunch of duplicated code :'(
+func TestPutString(t *testing.T) {
+	tdir := must_s(ioutil.TempDir("", "castore-test-3"))
+	defer os.RemoveAll(tdir)
+
+	s, err := New(Options{
+		BasePath: tdir,
+	})
+	assert.NoError(t, err)
+
+	key, err := s.PutString(TEST_VALUE)
 	assert.NoError(t, err)
 	assert.Equal(t, TEST_KEY, key)
 

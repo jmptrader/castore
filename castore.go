@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // TransformFunction transforms a key into a slice of strings, each of which
@@ -200,6 +201,11 @@ func (s *CAStore) Put(r io.Reader) (string, error) {
 // PutBytes is a helper function to put a byte array into the store.
 func (s *CAStore) PutBytes(b []byte) (string, error) {
 	return s.Put(bytes.NewReader(b))
+}
+
+// PutString is a helper function to put a string into the store.
+func (s *CAStore) PutString(val string) (string, error) {
+	return s.Put(strings.NewReader(val))
 }
 
 // Get will return an io.ReadCloser that represents the data stored with the
