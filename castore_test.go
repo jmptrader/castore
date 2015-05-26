@@ -46,7 +46,7 @@ func TestSimpleGetPut(t *testing.T) {
 
 	assert.Equal(t, []byte(TEST_VALUE), data)
 
-	// Test non-existant value.
+	// Test non-existent value.
 	r, err = s.Get("bad-key")
 	assert.NoError(t, err)
 	assert.Nil(t, r)
@@ -59,7 +59,7 @@ func TestSimpleGetPut(t *testing.T) {
 	f.Close()
 }
 
-func TestCAStoreMaxSize(t *testing.T) {
+func TestMaxSize(t *testing.T) {
 	tdir := must_s(ioutil.TempDir("", "castore-test-2"))
 	defer os.RemoveAll(tdir)
 
@@ -85,9 +85,37 @@ func TestCAStoreMaxSize(t *testing.T) {
 	assert.Equal(t, "fc189cc673eef6d7ecee4da629f1ed1386479b238dba2ba444e1c7cdde5419b6", key)
 }
 
-func TestCAStoreBadOpts(t *testing.T) {
+func TestBadOpts(t *testing.T) {
 	_, err := New(Options{
 		BasePath: "",
 	})
 	assert.Equal(t, ErrNoBasePath, err)
+}
+
+func TestPutBytes(t *testing.T) {
+	tdir := must_s(ioutil.TempDir("", "castore-test-3"))
+	defer os.RemoveAll(tdir)
+
+	s, err := New(Options{
+		BasePath: tdir,
+	})
+	assert.NoError(t, err)
+
+	const (
+		TEST_KEY   = "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2"
+		TEST_VALUE = "foobar"
+	)
+
+	key, err := s.PutBytes([]byte(TEST_VALUE))
+	assert.NoError(t, err)
+	assert.Equal(t, TEST_KEY, key)
+
+	r, err := s.Get(TEST_KEY)
+	assert.NoError(t, err)
+
+	data, err := ioutil.ReadAll(r)
+	r.Close()
+	assert.NoError(t, err)
+
+	assert.Equal(t, []byte(TEST_VALUE), data)
 }

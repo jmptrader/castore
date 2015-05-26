@@ -1,6 +1,7 @@
 package castore
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -194,6 +195,11 @@ func (s *CAStore) Put(r io.Reader) (string, error) {
 
 	// All done!
 	return key, nil
+}
+
+// PutBytes is a helper function to put a byte array into the store.
+func (s *CAStore) PutBytes(b []byte) (string, error) {
+	return s.Put(bytes.NewReader(b))
 }
 
 // Get will return an io.ReadCloser that represents the data stored with the
