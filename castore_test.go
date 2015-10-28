@@ -138,3 +138,27 @@ func TestPutString(t *testing.T) {
 
 	assert.Equal(t, []byte(TEST_VALUE), data)
 }
+
+func TestSize(t *testing.T) {
+	tdir := must_s(ioutil.TempDir("", "castore-test-4"))
+	defer os.RemoveAll(tdir)
+
+	s, err := New(Options{
+		BasePath: tdir,
+	})
+	assert.NoError(t, err)
+
+	key, err := s.PutBytes([]byte(TEST_VALUE))
+	assert.NoError(t, err)
+	assert.Equal(t, TEST_KEY, key)
+
+	// Working
+	size, err := s.Size(key)
+	assert.NoError(t, err)
+	assert.Equal(t, len(TEST_VALUE), int(size))
+
+	// Not working
+	size, err = s.Size("not exist")
+	assert.NoError(t, err)
+	assert.True(t, size < 0)
+}

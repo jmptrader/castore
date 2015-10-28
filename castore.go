@@ -224,6 +224,21 @@ func (s *CAStore) Get(key string) (io.ReadCloser, error) {
 	return f, err
 }
 
+// Size will return the size of the data stored with the given key.  If the key
+// does not exist in the store, then the returned value will be negative.
+func (s *CAStore) Size(key string) (int64, error) {
+	// Try opening the file.
+	inf, err := os.Stat(filepath.Join(s.transform(key), key))
+	if os.IsNotExist(err) {
+		return -1, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+
+	return inf.Size(), nil
+}
+
 // transform is a helper function that will take the given key and return the
 // containing directory's path on-disk (including the BaseDir).
 func (s *CAStore) transform(key string) string {
